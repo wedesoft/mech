@@ -1,0 +1,10 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    ruby-sdl2 (0.3.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ruby-sdl2
