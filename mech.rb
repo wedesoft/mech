@@ -40,11 +40,14 @@ end
 
 class MechGame
   def initialize
-    SDL2.init SDL2::INIT_VIDEO | SDL2::INIT_JOYSTICK
+    SDL2.init SDL2::INIT_VIDEO | SDL2::INIT_JOYSTICK | SDL2::INIT_AUDIO
+    SDL2::Mixer.init SDL2::Mixer::INIT_OGG
+    SDL2::Mixer.open 22050, SDL2::Mixer::DEFAULT_FORMAT, 2, 512
     @window = SDL2::Window.create 'Mech', 0, 0, 640, 480, 0 # SDL2::Window::Flags::FULLSCREEN_DESKTOP
     @renderer = @window.create_renderer -1, 0
     @mech_sprite = Sprite.new @renderer, 'mech.png'
     @mech_physics = Physics.new
+    @laser_sound = SDL2::Mixer::Chunk.load 'laser.ogg'
     @joystick = nil
     @quit = false
   end
@@ -59,6 +62,8 @@ class MechGame
       when SDL2::Event::JoyAxisMotion
         @mech_physics.speed_x = event.value * 100.0 / 32768 if event.axis == 0
         @mech_physics.speed_y = event.value * 100.0 / 32768 if event.axis == 1
+      when SDL2::Event::JoyButtonDown
+        SDL2::Mixer::Channels.play 0, @laser_sound, 0 if event.button == 3
       end
     end
   end
