@@ -3,10 +3,31 @@ global_settings {
   assumed_gamma 2.2
 }
 
-background { colour rgbt <0.5, 0.5, 0.5, 1 > }
+background {
+  colour rgbt <0.5, 0.5, 0.5, 1 >
+}
 
 camera {
-   location < 0, 0, 0 >
-   look_at  <  1,  0,  0 >
-   angle    60
+  orthographic
+  location <0, 0, -2>
+  look_at  <0, 0,  0>
+  right x * image_width / image_height
+  up y
+}
+
+light_source {
+  <0, 100, -100>
+  rgb <1, 1, 0.8>
+}
+
+sphere {
+  <0, 0, 0>, 0.5
+  pigment {
+    colour rgb <1, 1, 1>
+  }
+  finish {
+    ambient 0.0
+    diffuse 0.8
+    reflection 0.2
+  }
 }
