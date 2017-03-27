@@ -19,8 +19,8 @@ class Physics
   attr_reader :position
   attr_reader :speed
 
-  def initialize
-    @position = Vector[320, 240]
+  def initialize position
+    @position = position
     @speed = Vector[0, 0]
   end
 
@@ -43,11 +43,12 @@ class MechGame
     SDL2.init SDL2::INIT_VIDEO | SDL2::INIT_JOYSTICK | SDL2::INIT_AUDIO
     SDL2::Mixer.init SDL2::Mixer::INIT_OGG
     SDL2::Mixer.open 22050, SDL2::Mixer::DEFAULT_FORMAT, 2, 512
-    @window = SDL2::Window.create 'Mech', 0, 0, 640, 480, 0 # SDL2::Window::Flags::FULLSCREEN_DESKTOP
+    @window = SDL2::Window.create 'Mech', SDL2::Window::POS_UNDEFINED, SDL2::Window::POS_UNDEFINED, 640, 480, SDL2::Window::Flags::FULLSCREEN_DESKTOP
+    w, h = *@window.size
     @renderer = @window.create_renderer -1, 0
-    @mech_sprite = Sprite.new @renderer, 'mech.png'
-    @mech_physics = Physics.new
-    @laser_sound = SDL2::Mixer::Chunk.load 'laser.ogg'
+    @mech_sprite = Sprite.new @renderer, 'data/mech.png'
+    @mech_physics = Physics.new Vector[w/2, h/2]
+    @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
     @joystick = nil
     @quit = false
   end
@@ -64,6 +65,7 @@ class MechGame
         @mech_physics.speed_y = event.value * 100.0 / 32768 if event.axis == 1
       when SDL2::Event::JoyButtonDown
         SDL2::Mixer::Channels.play 0, @laser_sound, 0 if event.button == 3
+        @quit = true if event.button == 8
       end
     end
   end
