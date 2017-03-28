@@ -35,5 +35,5 @@ union {
     diffuse 0.8
     reflection 0.2
   }
-  rotate z * (360 * clock)
+  rotate -z * (360 * clock)
 }

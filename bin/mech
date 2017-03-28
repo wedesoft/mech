@@ -4,36 +4,60 @@ require 'sdl2'
 
 
 class Sprite
-  def initialize renderer, file_name
-    @sprite = renderer.create_texture_from SDL2::Surface.load file_name
+  def initialize renderer, file_name, count
+    @sprite = (0...count).map { |i| renderer.create_texture_from SDL2::Surface.load file_name % i }
+    @count = count
   end
 
-  def paint renderer, position
-    x, y = *position
-    w, h = @sprite.w, @sprite.h
-    renderer.copy @sprite, nil, SDL2::Rect[x - w / 2, y - h / 2, w, h]
+  def paint renderer, physics
+    x, y = *physics.position
+    dx, dy = *physics.speed
+    index = (Math.atan2(dy, dx) * @count / (2 * Math::PI)).round % @count
+    sprite = @sprite[index]
+    w, h = sprite.w, sprite.h
+    renderer.copy sprite, nil, SDL2::Rect[x - w / 2, y - h / 2, w, h]
   end
 end
 
 class Physics
   attr_reader :position
-  attr_reader :speed
+  attr_accessor :speed
 
   def initialize position
     @position = position
     @speed = Vector[0, 0]
   end
 
-  def speed_x= value
-    @speed = Vector[value, @speed[1]]
-  end
-
-  def speed_y= value
-    @speed = Vector[@speed[0], value]
-  end
-
   def update dt
     @position += Vector[*@speed] * dt
+  end
+end
+
+
+class Joystick
+  attr_reader :axes
+  attr_reader :quit
+
+  def initialize
+    @axes = [0, 0]
+    @button = false
+    @quit = false
+  end
+
+  def handle_motion event
+    @axes[0] = event.value if event.axis == 0
+    @axes[1] = event.value if event.axis == 1
+  end
+
+  def handle_button event
+    @button = true if event.button == 3
+    @quit = true if event.button == 8
+  end
+
+  def button
+    retval = @button
+    @button = false
+    retval
   end
 end
 
@@ -46,10 +70,10 @@ class MechGame
     @window = SDL2::Window.create 'Mech', SDL2::Window::POS_UNDEFINED, SDL2::Window::POS_UNDEFINED, 640, 480, SDL2::Window::Flags::FULLSCREEN_DESKTOP
     w, h = *@window.size
     @renderer = @window.create_renderer -1, 0
-    @mech_sprite = Sprite.new @renderer, 'data/mech0.png'
+    @mech_sprite = Sprite.new @renderer, 'data/mech%02d.png', 36
     @mech_physics = Physics.new Vector[w/2, h/2]
     @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
-    @joystick = nil
+    @joystick = Joystick.new
     @quit = false
   end
 
@@ -59,21 +83,22 @@ class MechGame
       when SDL2::Event::Quit
         @quit = true
       when SDL2::Event::JoyDeviceAdded
-        @joystick = SDL2::Joystick.open event.which
+        SDL2::Joystick.open event.which
       when SDL2::Event::JoyAxisMotion
-        @mech_physics.speed_x = event.value * 100.0 / 32768 if event.axis == 0
-        @mech_physics.speed_y = event.value * 100.0 / 32768 if event.axis == 1
+        @joystick.handle_motion event
       when SDL2::Event::JoyButtonDown
-        SDL2::Mixer::Channels.play 0, @laser_sound, 0 if event.button == 3
-        @quit = true if event.button == 8
+        @joystick.handle_button event
       end
     end
+    @mech_physics.speed = Vector[*@joystick.axes] * 100.0 / 32768
+    SDL2::Mixer::Channels.play 0, @laser_sound, 0 if @joystick.button
+    @quit ||= @joystick.quit
   end
 
   def paint
     @renderer.draw_color = [0xA0, 0xA0, 0xA0]
     @renderer.clear
-    @mech_sprite.paint @renderer, @mech_physics.position
+    @mech_sprite.paint @renderer, @mech_physics
     @renderer.present
   end
 
