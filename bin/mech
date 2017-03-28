@@ -3,6 +3,19 @@ require 'matrix'
 require 'sdl2'
 
 
+class Numeric
+  def limit abs_value
+    if self > abs_value
+      abs_value
+    elsif self < -abs_value
+      -abs_value
+    else
+      self
+    end
+  end
+end
+
+
 class Vector
   def angle
     Math.atan2 self[1], self[0]
@@ -27,23 +40,37 @@ class Sprite
   end
 
   def paint renderer, physics
-    sprite = @sprite[index(physics.speed.angle)]
+    sprite = @sprite[index(physics.direction)]
     renderer.copy sprite, nil, rectangle(physics.position)
   end
 end
 
+
 class Physics
+  MAX_SPEED = 100.0
+  TURN_RATE = 2 * Math::PI / 10
+  ACCELERATION = 50
+
   attr_reader :position
-  attr_accessor :speed
+  attr_reader :direction
 
   def initialize position
     @position = position
-    @speed = Vector[0, 0]
+    @direction = 0
+    @speed = 0
   end
 
   def update joystick, dt
-    @speed = Vector[*joystick.axes] * 100.0 / 32768
-    @position += @speed * dt
+    nominal_speed = -joystick.axes[1] * MAX_SPEED / 32768
+    speed_change = (nominal_speed - @speed).limit ACCELERATION * dt
+    direction_change = joystick.axes[0] * TURN_RATE / 32768 * dt
+    @direction = (@direction + direction_change) % (2 * Math::PI)
+    @speed += speed_change
+    @position += speed * dt
+  end
+
+  def speed
+    Vector[Math.cos(@direction), Math.sin(@direction)] * @speed
   end
 end
 
@@ -52,7 +79,8 @@ class Joystick
   attr_reader :axes
   attr_reader :quit
 
-  def initialize
+  def initialize event
+    @device = SDL2::Joystick.open event.which
     @axes = [0, 0]
     @button = false
     @quit = false
@@ -87,7 +115,6 @@ class MechGame
     @mech_sprite = Sprite.new @renderer, 'data/mech%02d.png', 36
     @mech_physics = Physics.new Vector[w/2, h/2]
     @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
-    @joystick = Joystick.new
     @quit = false
   end
 
@@ -97,7 +124,7 @@ class MechGame
       when SDL2::Event::Quit
         @quit = true
       when SDL2::Event::JoyDeviceAdded
-        SDL2::Joystick.open event.which
+        @joystick = Joystick.new event
       when SDL2::Event::JoyAxisMotion
         @joystick.handle_motion event
       when SDL2::Event::JoyButtonDown
