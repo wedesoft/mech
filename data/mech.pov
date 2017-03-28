@@ -20,8 +20,13 @@ light_source {
   rgb <1, 1, 0.8>
 }
 
-sphere {
-  <0, 0, 0>, 0.5
+union {
+  sphere {
+    <0, 0, 0>, 0.3
+  }
+  cylinder {
+    <0, 0, 0>, <0.4, 0, 0>, 0.1
+  }
   pigment {
     colour rgb <1, 1, 1>
   }
@@ -30,4 +35,5 @@ sphere {
     diffuse 0.8
     reflection 0.2
   }
+  rotate z * (360 * clock)
 }

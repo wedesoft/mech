@@ -46,7 +46,7 @@ class MechGame
     @window = SDL2::Window.create 'Mech', SDL2::Window::POS_UNDEFINED, SDL2::Window::POS_UNDEFINED, 640, 480, SDL2::Window::Flags::FULLSCREEN_DESKTOP
     w, h = *@window.size
     @renderer = @window.create_renderer -1, 0
-    @mech_sprite = Sprite.new @renderer, 'data/mech.png'
+    @mech_sprite = Sprite.new @renderer, 'data/mech0.png'
     @mech_physics = Physics.new Vector[w/2, h/2]
     @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
     @joystick = nil
