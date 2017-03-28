@@ -3,19 +3,32 @@ require 'matrix'
 require 'sdl2'
 
 
+class Vector
+  def angle
+    Math.atan2 self[1], self[0]
+  end
+end
+
+
 class Sprite
   def initialize renderer, file_name, count
     @sprite = (0...count).map { |i| renderer.create_texture_from SDL2::Surface.load file_name % i }
     @count = count
   end
 
+  def index angle
+    (angle * @count / (2 * Math::PI)).round % @count
+  end
+
+  def rectangle position
+    x, y = *position
+    w, h = @sprite.first.w, @sprite.first.h
+    SDL2::Rect[x - w / 2, y - h / 2, w, h]
+  end
+
   def paint renderer, physics
-    x, y = *physics.position
-    dx, dy = *physics.speed
-    index = (Math.atan2(dy, dx) * @count / (2 * Math::PI)).round % @count
-    sprite = @sprite[index]
-    w, h = sprite.w, sprite.h
-    renderer.copy sprite, nil, SDL2::Rect[x - w / 2, y - h / 2, w, h]
+    sprite = @sprite[index(physics.speed.angle)]
+    renderer.copy sprite, nil, rectangle(physics.position)
   end
 end
 
