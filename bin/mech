@@ -28,8 +28,9 @@ class Physics
     @speed = Vector[0, 0]
   end
 
-  def update dt
-    @position += Vector[*@speed] * dt
+  def update joystick, dt
+    @speed = Vector[*joystick.axes] * 100.0 / 32768
+    @position += @speed * dt
   end
 end
 
@@ -90,7 +91,6 @@ class MechGame
         @joystick.handle_button event
       end
     end
-    @mech_physics.speed = Vector[*@joystick.axes] * 100.0 / 32768
     SDL2::Mixer::Channels.play 0, @laser_sound, 0 if @joystick.button
     @quit ||= @joystick.quit
   end
@@ -112,7 +112,7 @@ class MechGame
         sleep 0.04 - dt
         dt = 0.04
       end
-      @mech_physics.update dt
+      @mech_physics.update @joystick, dt
       time += dt
     end
   end

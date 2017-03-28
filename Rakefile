@@ -4,7 +4,7 @@ task :default => :all
 
 task :all => ['data/mech00.png']
 
-file 'data/mech0.png' => ['data/mech.ini', 'data/mech.pov'] do |t|
+file 'data/mech00.png' => ['data/mech.ini', 'data/mech.pov'] do |t|
   sh "povray data/mech.ini +Idata/mech.pov"
 end
 
