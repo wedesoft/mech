@@ -2,6 +2,7 @@ require 'sdl2'
 require 'audio'
 require 'mech_graphics'
 require 'physics'
+require 'bullet'
 require 'joystick'
 
 
@@ -14,6 +15,8 @@ class Game
     @renderer = @window.create_renderer -1, 0
     @mech_graphics = MechGraphics.new @renderer
     @mech_physics = Physics.new Vector[w/2, h/2]
+    @bullet_physics = []
+    @bullet_graphics = Sprite.new @renderer, 'data/bullet.png'
     @laser_sound = Audio.load 'data/laser.ogg'
     @quit = false
   end
@@ -32,7 +35,10 @@ class Game
       end
     end
     if @joystick
-      @audio.play @laser_sound if @joystick.button
+      if @joystick.button
+        @audio.play @laser_sound
+        @bullet_physics << Bullet.new(@mech_physics.nozzle_position, @mech_physics.turret_direction)
+      end
       @quit ||= @joystick.quit
     end
   end
@@ -41,6 +47,10 @@ class Game
     @renderer.draw_color = [0xA0, 0xA0, 0xA0]
     @renderer.clear
     @mech_graphics.paint @renderer, @mech_physics
+    @bullet_physics.each do |physics|
+      @bullet_graphics.paint @renderer, physics.position
+    end
+    @bullet_physics = @bullet_physics.select &:live?
     @renderer.present
   end
 
@@ -55,6 +65,9 @@ class Game
         dt = 0.04
       end
       @mech_physics.update @joystick, dt
+      @bullet_physics.each do |physics|
+        physics.update dt
+      end
       time += dt
     end
   end

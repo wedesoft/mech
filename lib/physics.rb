@@ -42,7 +42,11 @@ class Physics
   end
 
   def turret_position
-    @position + Matrix.rotation(@direction) *  Vector[-20, -20]
+    @position + Matrix.rotation(@direction) * Vector[-20, -20]
+  end
+
+  def nozzle_position
+    turret_position + Matrix.rotation(turret_direction) * Vector[32, 0]
   end
 
   def turret_direction

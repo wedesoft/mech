@@ -1,5 +1,5 @@
 class Sprite
-  def initialize renderer, file_name, count
+  def initialize renderer, file_name, count = 1
     @sprite = (0...count).map { |i| renderer.create_texture_from SDL2::Surface.load file_name % i }
     @count = count
   end
@@ -14,7 +14,7 @@ class Sprite
     SDL2::Rect[x - w / 2, y - h / 2, w, h]
   end
 
-  def paint renderer, position, direction
+  def paint renderer, position, direction = 0
     sprite = @sprite[index(direction)]
     renderer.copy sprite, nil, rectangle(position)
   end
