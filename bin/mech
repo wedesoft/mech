@@ -39,9 +39,22 @@ class Sprite
     SDL2::Rect[x - w / 2, y - h / 2, w, h]
   end
 
+  def paint renderer, position, direction
+    sprite = @sprite[index(direction)]
+    renderer.copy sprite, nil, rectangle(position)
+  end
+end
+
+
+class MechGraphics
+  def initialize renderer
+    @body_sprite = Sprite.new renderer, 'data/mech%02d.png', 36
+    @turret_sprite = Sprite.new renderer, 'data/turret%02d.png', 18
+  end
+
   def paint renderer, physics
-    sprite = @sprite[index(physics.direction)]
-    renderer.copy sprite, nil, rectangle(physics.position)
+    @body_sprite.paint renderer, physics.position, physics.direction
+    @turret_sprite.paint renderer, physics.position, physics.direction
   end
 end
 
@@ -61,11 +74,13 @@ class Physics
   end
 
   def update joystick, dt
-    nominal_speed = -joystick.axes[1] * MAX_SPEED / 32768
-    speed_change = (nominal_speed - @speed).limit ACCELERATION * dt
-    direction_change = joystick.axes[0] * TURN_RATE / 32768 * dt
-    @direction = (@direction + direction_change) % (2 * Math::PI)
-    @speed += speed_change
+    if joystick
+      nominal_speed = -joystick.axes[1] * MAX_SPEED / 32768
+      speed_change = (nominal_speed - @speed).limit ACCELERATION * dt
+      direction_change = joystick.axes[0] * TURN_RATE / 32768 * dt
+      @direction = (@direction + direction_change) % (2 * Math::PI)
+      @speed += speed_change
+    end
     @position += speed * dt
   end
 
@@ -112,7 +127,7 @@ class Game
     @window = SDL2::Window.create 'Mech', SDL2::Window::POS_UNDEFINED, SDL2::Window::POS_UNDEFINED, 640, 480, SDL2::Window::Flags::FULLSCREEN_DESKTOP
     w, h = *@window.size
     @renderer = @window.create_renderer -1, 0
-    @mech_sprite = Sprite.new @renderer, 'data/mech%02d.png', 36
+    @mech_graphics = MechGraphics.new @renderer
     @mech_physics = Physics.new Vector[w/2, h/2]
     @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
     @quit = false
@@ -131,14 +146,16 @@ class Game
         @joystick.handle_button event
       end
     end
-    SDL2::Mixer::Channels.play 0, @laser_sound, 0 if @joystick.button
-    @quit ||= @joystick.quit
+    if @joystick
+      SDL2::Mixer::Channels.play 0, @laser_sound, 0 if @joystick.button
+      @quit ||= @joystick.quit
+    end
   end
 
   def paint
     @renderer.draw_color = [0xA0, 0xA0, 0xA0]
     @renderer.clear
-    @mech_sprite.paint @renderer, @mech_physics
+    @mech_graphics.paint @renderer, @mech_physics
     @renderer.present
   end
 
