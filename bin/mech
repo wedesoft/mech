@@ -104,7 +104,7 @@ class Joystick
 end
 
 
-class MechGame
+class Game
   def initialize
     SDL2.init SDL2::INIT_VIDEO | SDL2::INIT_JOYSTICK | SDL2::INIT_AUDIO
     SDL2::Mixer.init SDL2::Mixer::INIT_OGG
@@ -159,4 +159,4 @@ class MechGame
 end
 
 
-MechGame.new.run
+Game.new.run
