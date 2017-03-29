@@ -13,6 +13,19 @@ class Numeric
       self
     end
   end
+
+  def limit_angle abs_value
+    angle = self % (2 * Math::PI)
+    if angle <= abs_value or angle >= 2 * Math::PI - abs_value
+      self
+    else
+      if angle <= Math::PI
+        abs_value
+      else
+        -abs_value
+      end
+    end
+  end
 end
 
 
@@ -75,9 +88,10 @@ class Physics
 
   def update joystick, dt
     if joystick
-      nominal_speed = -joystick.axes[1] * MAX_SPEED / 32768
+      nominal_speed = joystick.axes.norm * MAX_SPEED / 32768
       speed_change = (nominal_speed - @speed).limit ACCELERATION * dt
-      direction_change = joystick.axes[0] * TURN_RATE / 32768 * dt
+      nominal_direction = joystick.axes.angle
+      direction_change = (nominal_direction - @direction).limit_angle TURN_RATE * dt
       @direction = (@direction + direction_change) % (2 * Math::PI)
       @speed += speed_change
     end
@@ -91,7 +105,6 @@ end
 
 
 class Joystick
-  attr_reader :axes
   attr_reader :quit
 
   def initialize event
@@ -109,6 +122,10 @@ class Joystick
   def handle_button event
     @button = true if event.button == 3
     @quit = true if event.button == 8
+  end
+
+  def axes
+    Vector[*@axes]
   end
 
   def button
