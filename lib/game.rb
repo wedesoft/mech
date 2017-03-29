@@ -1,4 +1,5 @@
 require 'sdl2'
+require 'audio'
 require 'mech_graphics'
 require 'physics'
 require 'joystick'
@@ -7,14 +8,13 @@ require 'joystick'
 class Game
   def initialize
     SDL2.init SDL2::INIT_VIDEO | SDL2::INIT_JOYSTICK | SDL2::INIT_AUDIO
-    SDL2::Mixer.init SDL2::Mixer::INIT_OGG
-    SDL2::Mixer.open 22050, SDL2::Mixer::DEFAULT_FORMAT, 2, 512
     @window = SDL2::Window.create 'Mech', SDL2::Window::POS_UNDEFINED, SDL2::Window::POS_UNDEFINED, 640, 480, SDL2::Window::Flags::FULLSCREEN_DESKTOP
     w, h = *@window.size
+    @audio = Audio.new
     @renderer = @window.create_renderer -1, 0
     @mech_graphics = MechGraphics.new @renderer
     @mech_physics = Physics.new Vector[w/2, h/2]
-    @laser_sound = SDL2::Mixer::Chunk.load 'data/laser.ogg'
+    @laser_sound = Audio.load 'data/laser.ogg'
     @quit = false
   end
 
@@ -32,7 +32,7 @@ class Game
       end
     end
     if @joystick
-      SDL2::Mixer::Channels.play 0, @laser_sound, 0 if @joystick.button
+      @audio.play @laser_sound if @joystick.button
       @quit ||= @joystick.quit
     end
   end
