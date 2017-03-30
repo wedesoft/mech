@@ -1,3 +1,4 @@
-data/mech??.png
-data/turret??.png
+data/mech*.png
+data/turret*.png
 data/bullet.png
+data/explosion.png

@@ -1,4 +1,6 @@
 # TODO
 
-* bullet
+* render explosion
 * explosion
+* laser
+* collision

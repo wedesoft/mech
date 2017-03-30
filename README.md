@@ -16,6 +16,10 @@ bundle install
 
 * [SDL2][1]
 * [ruby-sdl2][2]
+* [POV-Ray][3]
+    * [POV-Ray smoke and explosions][4]
 
 [1]: https://wiki.libsdl.org/
 [2]: http://ohai.github.io/ruby-sdl2/
+[3]: http://povray.org/
+[4]: http://www.geocities.ws/evilsnack/tut01.html
