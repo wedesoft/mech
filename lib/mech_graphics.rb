@@ -8,8 +8,8 @@ class MechGraphics
   end
 
   def paint renderer, physics
-    @body_sprite.paint renderer, physics.position, physics.direction
-    @turret_sprite.paint renderer, physics.turret_position, physics.turret_direction
+    @body_sprite.paint renderer, physics
+    @turret_sprite.paint renderer, physics.turret
   end
 end
 

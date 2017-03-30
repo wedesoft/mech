@@ -1,8 +1,9 @@
 require 'core_extensions/matrix'
 require 'core_extensions/numeric'
+require 'turret'
 
 
-class Physics
+class Mech
   MAX_SPEED = 100.0
   TURN_RATE = 2 * Math::PI / 4
   TURRET_TURN_RATE = 2 * Math::PI
@@ -18,7 +19,7 @@ class Physics
     @turret_direction = 0
   end
 
-  def update joystick, dt
+  def update dt, joystick
     if joystick
       nominal_speed = joystick.axes.norm * MAX_SPEED / Joystick::MAX_AXIS
       nominal_direction = joystick.axes.angle
@@ -41,15 +42,23 @@ class Physics
     Matrix.rotation(@direction) * Vector[@speed, 0]
   end
 
-  def turret_position
-    @position + Matrix.rotation(@direction) * Vector[-20, -20]
-  end
-
   def nozzle_position
     turret_position + Matrix.rotation(turret_direction) * Vector[32, 0]
   end
 
+  def turret_position
+    @position + Matrix.rotation(@direction) * Vector[-20, -20]
+  end
+
   def turret_direction
     @direction + @turret_direction
+  end
+
+  def turret
+    Turret.new turret_position, turret_direction
+  end
+
+  def live?
+    true
   end
 end

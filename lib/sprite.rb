@@ -14,9 +14,9 @@ class Sprite
     SDL2::Rect[x - w / 2, y - h / 2, w, h]
   end
 
-  def paint renderer, position, direction = 0
-    sprite = @sprite[index(direction)]
-    renderer.copy sprite, nil, rectangle(position)
+  def paint renderer, physics
+    sprite = @sprite[index(physics.direction)]
+    renderer.copy sprite, nil, rectangle(physics.position)
   end
 end
 

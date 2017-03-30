@@ -13,7 +13,11 @@ class Bullet
     @time = LIFE_TIME
   end
 
-  def update dt
+  def direction
+    0
+  end
+
+  def update dt, joystick
     @position += @speed * dt
     @time -= dt
   end

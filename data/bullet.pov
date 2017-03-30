@@ -3,7 +3,7 @@
 sphere {
     <0, 0, 0>, 0.3
   pigment {
-    colour rgb <0, 0, 1>
+    colour rgb <0.2, 0.2, 0.2>
   }
   finish {
     ambient 0.0
