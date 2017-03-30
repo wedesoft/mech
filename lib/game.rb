@@ -5,6 +5,9 @@ require 'mech'
 require 'bullet'
 require 'explosion'
 require 'joystick'
+require 'sprite'
+require 'oriented_sprite'
+require 'animated_sprite'
 
 
 class Game
@@ -19,7 +22,7 @@ class Game
     @graphics = {
       Mech      => MechGraphics.new(@renderer),
       Bullet    => Sprite.new(@renderer, 'data/bullet.png'),
-      Explosion => Sprite.new(@renderer, 'data/explosion20.png')
+      Explosion => AnimatedSprite.new(@renderer, 'data/explosion%02d.png', 25)
     }
     @laser_sound = Audio.load 'data/laser.ogg'
     @quit = false
@@ -62,9 +65,9 @@ class Game
       paint
       handle_events
       dt = Time.new.to_f - time
-      if dt < 0.04
-        sleep 0.04 - dt
-        dt = 0.04
+      if dt < 0.01
+        sleep 0.01 - dt
+        dt = 0.01
       end
       @units = @units.collect do |unit|
         unit.update dt, @joystick

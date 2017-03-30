@@ -8,9 +8,9 @@ class Bullet < Unit
   LIFE_TIME = 0.5
 
   def initialize position, direction
-    super position
+    super position, direction
     @speed = Matrix.rotation(direction) * Vector[SPEED, 0]
-    @time = LIFE_TIME
+    @time = 0
   end
 
   def explode
@@ -19,7 +19,7 @@ class Bullet < Unit
 
   def update dt, joystick
     @position += @speed * dt
-    @time -= dt
-    @time >= 0 ? [self] : [explode]
+    @time += dt
+    @time < LIFE_TIME ? [self] : [explode]
   end
 end

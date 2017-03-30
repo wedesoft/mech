@@ -2,15 +2,19 @@ require 'unit'
 
 
 class Explosion < Unit
-  LIFE_TIME = 2
+  LIFE_TIME = 0.5
 
   def initialize position
     super position
-    @time = LIFE_TIME
+    @time = 0
+  end
+
+  def relative_age
+    @time / LIFE_TIME
   end
 
   def update dt, joystick
-    @time -= dt
-    @time >= 0 ? [self] : []
+    @time += dt
+    @time < LIFE_TIME ? [self] : []
   end
 end
