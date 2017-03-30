@@ -15,10 +15,11 @@ class Game
     @audio = Audio.new
     @renderer = @window.create_renderer -1, 0
     @mech = Mech.new Vector[w/2, h/2]
-    @physics = [@mech]
+    @units = [@mech]
     @graphics = {
-      Mech   => MechGraphics.new(@renderer),
-      Bullet => Sprite.new(@renderer, 'data/bullet.png')
+      Mech      => MechGraphics.new(@renderer),
+      Bullet    => Sprite.new(@renderer, 'data/bullet.png'),
+      Explosion => Sprite.new(@renderer, 'data/explosion20.png')
     }
     @laser_sound = Audio.load 'data/laser.ogg'
     @quit = false
@@ -40,7 +41,7 @@ class Game
     if @joystick
       if @joystick.button
         @audio.play @laser_sound
-        @physics << Bullet.new(@mech.nozzle_position, @mech.turret_direction)
+        @units << Bullet.new(@mech.nozzle_position, @mech.turret_direction)
       end
       @quit ||= @joystick.quit
     end
@@ -49,10 +50,9 @@ class Game
   def paint
     @renderer.draw_color = [0xA0, 0xA0, 0xA0]
     @renderer.clear
-    @physics.each do |physics|
-      @graphics[physics.class].paint @renderer, physics
+    @units.each do |unit|
+      @graphics[unit.class].paint @renderer, unit
     end
-    @physics = @physics.select &:live?
     @renderer.present
   end
 
@@ -66,9 +66,9 @@ class Game
         sleep 0.04 - dt
         dt = 0.04
       end
-      @physics.each do |physics|
-        physics.update dt, @joystick
-      end
+      @units = @units.collect do |unit|
+        unit.update dt, @joystick
+      end.inject :+
       time += dt
     end
   end

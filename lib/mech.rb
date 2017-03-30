@@ -1,20 +1,17 @@
 require 'core_extensions/matrix'
 require 'core_extensions/numeric'
 require 'turret'
+require 'unit'
 
 
-class Mech
+class Mech < Unit
   MAX_SPEED = 100.0
   TURN_RATE = 2 * Math::PI / 4
   TURRET_TURN_RATE = 2 * Math::PI
   ACCELERATION = 50
 
-  attr_reader :position
-  attr_reader :direction
-
   def initialize position
-    @position = position
-    @direction = 0
+    super position
     @speed = 0
     @turret_direction = 0
   end
@@ -36,6 +33,7 @@ class Mech
     @turret_direction = (@turret_direction + turret_direction_change) % (2 * Math::PI)
     @speed += speed_change
     @position += speed * dt
+    [self]
   end
 
   def speed
@@ -56,9 +54,5 @@ class Mech
 
   def turret
     Turret.new turret_position, turret_direction
-  end
-
-  def live?
-    true
   end
 end
