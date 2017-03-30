@@ -1,7 +1,9 @@
 #include "data/world.inc"
 
+#declare move_fire = transform { translate 5 * z * clock }
+
 sphere {
-  <0, 0, 0>, 0.3
+  <0, 0, 0>, 1
 	pigment { rgbt 1 }
   hollow
   interior {
@@ -12,15 +14,15 @@ sphere {
       density {
         spherical density_map {
           [0   rgb 0]
-          [0.4 rgb <1,0,0>]
-          [0.6 rgb <1,1,0>]
-          [1   rgb 1]
+          [0.4 rgb <1-clock,0,0>]
+          [0.6 rgb <1-clock,1-clock,0>]
+          [1   rgb (1-clock)]
         }
-        translate 10 * y
+        transform { move_fire }
         warp { turbulence 1.5 lambda 2.75 }
-        translate -10 * y
+        transform { move_fire inverse }
       }
-      scale 0.3
+      scale (0.01 + 0.29 * pow(clock, 0.25))
     }
   }
 }
