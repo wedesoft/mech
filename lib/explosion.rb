@@ -1,20 +1,10 @@
-require 'unit'
+require 'timed_unit'
 
 
-class Explosion < Unit
+class Explosion < TimedUnit
   LIFE_TIME = 0.5
 
   def initialize position
-    super position
-    @time = 0
-  end
-
-  def relative_age
-    @time / LIFE_TIME
-  end
-
-  def update dt, joystick
-    @time += dt
-    @time < LIFE_TIME ? [self] : []
+    super LIFE_TIME, position
   end
 end

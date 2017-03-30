@@ -7,10 +7,6 @@ class Unit
     @direction = direction
   end
 
-  def age
-    0
-  end
-
   def update dt, joystick
   end
 end
