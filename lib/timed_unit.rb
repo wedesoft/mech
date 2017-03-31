@@ -18,6 +18,7 @@ class TimedUnit < Unit
 
   def update dt, joystick
     @time += dt
-    @time < @life_time ? super : finish
+    super
+    @time < @life_time ? [self] : finish
   end
 end
