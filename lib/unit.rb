@@ -7,6 +7,10 @@ class Unit
     @direction = direction
   end
 
+  def speed
+    Vector[0, 0]
+  end
+
   def update dt, joystick
     [self]
   end
