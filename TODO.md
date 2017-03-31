@@ -1,6 +1,6 @@
 # TODO
 
-* render explosion
-* explosion
-* laser
 * collision
+* engine sound
+* shield
+* laser

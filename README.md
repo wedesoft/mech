@@ -3,13 +3,15 @@
 Install [SDL2][1]
 
 ```
-sudo apt-get install libsdl2-dev
+sudo apt-get install povray ruby libsdl2-dev
 ```
 
-Then install the Ruby Gems:
+Then install the dependencies, build, and run the game:
 
 ```
 bundle install
+bundle exec rake
+bundle exec mech
 ```
 
 # External links

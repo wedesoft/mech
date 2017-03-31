@@ -12,7 +12,8 @@ sphere {
       emission 8
       samples 30, 30
       density {
-        spherical density_map {
+        spherical
+        density_map {
           [0   rgb 0]
           [0.4 rgb <1-clock,0,0>]
           [0.6 rgb <1-clock,1-clock,0>]
