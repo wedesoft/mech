@@ -8,5 +8,6 @@ class Unit
   end
 
   def update dt, joystick
+    [self]
   end
 end

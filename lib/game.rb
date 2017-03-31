@@ -6,6 +6,7 @@ require 'bullet'
 require 'explosion'
 require 'joystick'
 require 'sprite'
+require 'target'
 require 'oriented_sprite'
 require 'animated_sprite'
 
@@ -17,11 +18,13 @@ class Game
     w, h = *@window.size
     @audio = Audio.new
     @renderer = @window.create_renderer -1, 0
-    @mech = Mech.new Vector[w/2, h/2]
-    @units = [@mech]
+    @mech = Mech.new Vector[w/4, h/2]
+    target = Target.new Vector[3*w/4, h/2]
+    @units = [@mech, target]
     @graphics = {
       Mech      => MechGraphics.new(@renderer),
       Bullet    => Sprite.new(@renderer, 'data/bullet.png'),
+      Target    => Sprite.new(@renderer, 'data/target.png'),
       Explosion => AnimatedSprite.new(@renderer, 'data/explosion%02d.png', 25)
     }
     @laser_sound = Audio.load 'data/laser.ogg'

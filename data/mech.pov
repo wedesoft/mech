@@ -8,7 +8,7 @@ union {
     <0, 0, 0>, <0.4, 0, 0>, 0.1
   }
   pigment {
-    colour rgb <1, 1, 1>
+    colour rgb <0, 1, 0>
   }
   finish {
     ambient 0.0

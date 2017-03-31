@@ -2,7 +2,7 @@ require 'rake/clean'
 
 task :default => :all
 
-task :all => ['data/mech00.png', 'data/turret00.png', 'data/bullet.png', 'data/explosion00.png']
+task :all => ['data/mech00.png', 'data/turret00.png', 'data/bullet.png', 'data/explosion00.png', 'data/target.png']
 
 file 'data/mech00.png' => ['data/mech.ini', 'data/mech.pov'] do |t|
   sh "povray data/mech.ini +Idata/mech.pov"
@@ -20,4 +20,8 @@ file 'data/explosion00.png' => ['data/explosion.ini', 'data/explosion.pov'] do |
   sh "povray data/explosion.ini +Idata/explosion.pov"
 end
 
-CLEAN.include 'data/mech*.png', 'data/turret*.png', 'data/bullet.png', 'data/explosion*.png'
+file 'data/target.png' => ['data/target.ini', 'data/target.pov'] do |t|
+  sh "povray data/target.ini +Idata/target.pov"
+end
+
+CLEAN.include 'data/*.png'
