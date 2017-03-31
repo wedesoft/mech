@@ -29,6 +29,7 @@ class Game
       Explosion => AnimatedSprite.new(@renderer, 'data/explosion%02d.png', 25)
     }
     @laser_sound = Audio.load 'data/laser.ogg'
+    @impact_sound = Audio.load 'data/impact.ogg'
     @quit = false
   end
 
@@ -47,7 +48,7 @@ class Game
     end
     if @joystick
       if @joystick.button
-        @audio.play @laser_sound
+        @audio.play @laser_sound, 0
         @units << Bullet.new(@mech.nozzle_position, @mech.turret_direction)
       end
       @quit ||= @joystick.quit
@@ -75,9 +76,10 @@ class Game
       end
       @units = @units.collect do |unit|
         if unit.is_a? Bullet
-          t = collision unit, @target, 50
+          t = collision unit, @target, 45
           if t and t <= dt
             unit.instance_eval { @time = @life_time - t }
+            @audio.play @impact_sound, 1
           end
         end
         unit.update dt, @joystick

@@ -11,7 +11,7 @@ class Audio
     SDL2::Mixer::Chunk.load file_name
   end
 
-  def play sound
-    SDL2::Mixer::Channels.play 0, sound, 0
+  def play sound, channel
+    SDL2::Mixer::Channels.play channel, sound, 0
   end
 end
