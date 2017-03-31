@@ -4,8 +4,8 @@ require 'timed_unit'
 
 
 class Bullet < TimedUnit
-  SPEED = 500
-  LIFE_TIME = 0.5
+  SPEED = 1000
+  LIFE_TIME = 2
 
   def initialize position, direction
     super LIFE_TIME, position, Matrix.rotation(direction) * Vector[SPEED, 0], direction
