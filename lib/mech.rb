@@ -12,7 +12,7 @@ class Mech < Unit
 
   def initialize position
     super position
-    @speed = 0
+    @speed_norm = 0
     @turret_direction = 0
   end
 
@@ -26,18 +26,18 @@ class Mech < Unit
       nominal_direction = 0
       nominal_turret_direction = 0
     end
-    speed_change = (nominal_speed - @speed).limit ACCELERATION * dt
+    speed_change = (nominal_speed - @speed_norm).limit ACCELERATION * dt
     direction_change = (nominal_direction - @direction).limit_angle TURN_RATE * dt
     turret_direction_change = (nominal_turret_direction - @turret_direction).limit_angle TURRET_TURN_RATE * dt
     @direction = (@direction + direction_change) % (2 * Math::PI)
     @turret_direction = (@turret_direction + turret_direction_change) % (2 * Math::PI)
-    @speed += speed_change
+    @speed_norm += speed_change
     @position += speed * dt
-    [self]
+    super dt, joystick
   end
 
   def speed
-    Matrix.rotation(@direction) * Vector[@speed, 0]
+    Matrix.rotation(@direction) * Vector[@speed_norm, 0]
   end
 
   def nozzle_position
@@ -53,6 +53,6 @@ class Mech < Unit
   end
 
   def turret
-    Turret.new turret_position, turret_direction
+    Turret.new turret_position, @speed, turret_direction
   end
 end

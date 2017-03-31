@@ -3,10 +3,6 @@ class Sprite
     @sprite = renderer.create_texture_from SDL2::Surface.load file_name
   end
 
-  def index angle
-    (angle * @count / (2 * Math::PI)).round % @count
-  end
-
   def rectangle position
     x, y = *position
     w, h = @sprite.w, @sprite.h

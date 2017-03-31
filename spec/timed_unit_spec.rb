@@ -9,7 +9,7 @@ describe TimedUnit do
   end
 
   it 'should store the direction' do
-    expect(TimedUnit.new(8.0, Vector[2, 3], Math::PI).direction).to eq Math::PI
+    expect(TimedUnit.new(8.0, Vector[2, 3], Vector[0, 0], Math::PI).direction).to eq Math::PI
   end
 
   it 'should use zero as default direction' do

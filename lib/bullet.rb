@@ -8,16 +8,10 @@ class Bullet < TimedUnit
   LIFE_TIME = 0.5
 
   def initialize position, direction
-    super LIFE_TIME, position, direction
-    @speed = Matrix.rotation(direction) * Vector[SPEED, 0]
+    super LIFE_TIME, position, Matrix.rotation(direction) * Vector[SPEED, 0], direction
   end
 
   def finish
     [Explosion.new(@position)]
-  end
-
-  def update dt, joystick
-    @position += @speed * dt
-    super dt, joystick
   end
 end
