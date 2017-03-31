@@ -44,4 +44,8 @@ describe :collision do
   it 'should determine the time to collision even when it is not a frontal collision' do
     expect(collision(unit(-6, 4, 1, 0), unit(0, 0), 5)).to be_within(1e-6).of 3
   end
+
+  it 'should return nil if the objects are going to pass each other' do
+    expect(collision(unit(-5, 2, 1, 0), unit(5, -2, -1, 0), 3)).to be nil
+  end
 end
