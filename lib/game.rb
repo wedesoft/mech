@@ -9,6 +9,7 @@ require 'sprite'
 require 'target'
 require 'oriented_sprite'
 require 'animated_sprite'
+require 'collision'
 
 
 class Game
@@ -19,8 +20,8 @@ class Game
     @audio = Audio.new
     @renderer = @window.create_renderer -1, 0
     @mech = Mech.new Vector[w/4, h/2]
-    target = Target.new Vector[3*w/4, h/2]
-    @units = [@mech, target]
+    @target = Target.new Vector[3*w/4, h/2]
+    @units = [@mech, @target]
     @graphics = {
       Mech      => MechGraphics.new(@renderer),
       Bullet    => Sprite.new(@renderer, 'data/bullet.png'),
@@ -73,6 +74,12 @@ class Game
         dt = 0.01
       end
       @units = @units.collect do |unit|
+        if unit.is_a? Bullet
+          t = collision unit, @target, 50
+          if t and t <= dt
+            unit.instance_eval { @time = @life_time - t }
+          end
+        end
         unit.update dt, @joystick
       end.inject :+
       time += dt
