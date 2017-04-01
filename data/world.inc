@@ -4,7 +4,7 @@ global_settings {
 }
 
 background {
-  colour rgbt <0.5, 0.5, 0.5, 1 >
+  colour rgbt <0, 0, 0, 1>
 }
 
 camera {

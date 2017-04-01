@@ -49,7 +49,7 @@ class Game
     if @joystick
       if @joystick.button
         @audio.play @laser_sound, 0
-        @units << Bullet.new(@mech.nozzle_position, @mech.turret_direction)
+        @units << Bullet.new(@mech.nozzle_position, @mech.turret.direction)
       end
       @quit ||= @joystick.quit
     end
